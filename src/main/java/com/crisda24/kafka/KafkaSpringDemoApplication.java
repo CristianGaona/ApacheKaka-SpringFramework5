@@ -1,7 +1,10 @@
 package com.crisda24.kafka;
 
-import java.awt.List;
+import java.util.List;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +18,21 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 
-@SpringBootApplication
+@SpringBootApplication 
 public class KafkaSpringDemoApplication implements CommandLineRunner {
 
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
 	
 	private static final Logger log = LoggerFactory.getLogger(KafkaSpringDemoApplication.class); 
-	@KafkaListener(topics = "crisda24-topic", groupId = "crisda24-group")
-	public void listen(String message) {
-		log.info("Message Recived {} ", message);
+	@KafkaListener(topics = "crisda24-topic", containerFactory = "listenerContainerFactory", groupId = "crisda24-group",
+			properties = {"max.poll.interval.ms:4000", "max.poll.records:10"})
+	public void listen(List<ConsumerRecord<String, String>> messages) {
+		log.info("Start reading messages");
+		for (ConsumerRecord<String, String> message : messages) {
+			log.info("Parttition {}, Offset {}, Key {}, Value {} ", message.partition(), message.offset(), message.key(), message.value());
+		}
+		log.info("Batch complete");
 	}
 	
 	
@@ -34,8 +42,12 @@ public class KafkaSpringDemoApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String...args) throws Exception {
-	
-		ListenableFuture<SendResult<String, String>> future =  kafkaTemplate.send("crisda24-topic","Sample message" );
+		
+		for (int i = 0; i < 100; i++) {
+			kafkaTemplate.send("crisda24-topic", String.valueOf(i), String.format("Sample message %d ", i));
+			
+		}
+		/*ListenableFuture<SendResult<String, String>> future =  kafkaTemplate.send("crisda24-topic","Sample message" );
 	    future.addCallback(new KafkaSendCallback<String, String>() {
 
 			@Override
@@ -54,7 +66,7 @@ public class KafkaSpringDemoApplication implements CommandLineRunner {
 				log.error("Error sending message ", ex);
 				
 			}
-		});
+		});*/
 	}
 	
 }

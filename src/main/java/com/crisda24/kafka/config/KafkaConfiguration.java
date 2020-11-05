@@ -24,7 +24,7 @@ public class KafkaConfiguration {
 	public Map<String, Object> producerProperties() { 
 		Map<String, Object>props=new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
-		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,IntegerSerializer.class);
+		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class);
 	return props;
 	}
@@ -51,10 +51,11 @@ public class KafkaConfiguration {
 		return new DefaultKafkaConsumerFactory<>(consumerProperties());
 	}
 	
-	@Bean
+	@Bean(name = "listenerContainerFactory")
 	public ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory(){
 		ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
 		listenerContainerFactory.setConsumerFactory(consumerFactory());
+		listenerContainerFactory.setBatchListener(true);
 		return listenerContainerFactory; 
 	}
 }
