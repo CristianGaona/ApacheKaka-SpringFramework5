@@ -16,6 +16,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 
 
 @SpringBootApplication 
@@ -42,20 +43,25 @@ public class KafkaSpringDemoApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaSpringDemoApplication.class, args);
 	}
+	
+	@Scheduled (fixedDelay = 1000, initialDelay = 500)
+	public void print() {
+		log.info("Crisda24 rocks!");
+	}
 
 	@Override
 	public void run(String...args) throws Exception {
 		
-		for (int i = 0; i < 100; i++) {
+		/*for (int i = 0; i < 100; i++) {
 			kafkaTemplate.send("crisda24-topic", String.valueOf(i), String.format("Sample message %d ", i));
 			
-		}
-		log.info("Waiting to start");
+		}*/
+		/*log.info("Waiting to start");
 		Thread.sleep(5000);
 		log.info("Starting");
 		registry.getListenerContainer("autoStartup").start();
 		Thread.sleep(5000);
-		registry.getListenerContainer("autoStartup").stop();
+		registry.getListenerContainer("autoStartup").stop();*/
 		/*ListenableFuture<SendResult<String, String>> future =  kafkaTemplate.send("crisda24-topic","Sample message" );
 	    future.addCallback(new KafkaSendCallback<String, String>() {
 
