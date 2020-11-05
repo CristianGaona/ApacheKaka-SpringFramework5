@@ -12,13 +12,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistrar;
+
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
-import org.springframework.kafka.core.KafkaProducerException;
-import org.springframework.kafka.core.KafkaSendCallback;
+
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.util.concurrent.ListenableFuture;
+
 
 @SpringBootApplication 
 public class KafkaSpringDemoApplication implements CommandLineRunner {
@@ -30,7 +28,7 @@ public class KafkaSpringDemoApplication implements CommandLineRunner {
 	private KafkaListenerEndpointRegistry registry;
 	
 	private static final Logger log = LoggerFactory.getLogger(KafkaSpringDemoApplication.class); 
-	@KafkaListener(id= "autoStartup", autoStartup = "salse", topics = "crisda24-topic", containerFactory = "listenerContainerFactory", groupId = "crisda24-group",
+	@KafkaListener(id= "autoStartup", autoStartup = "false", topics = "crisda24-topic", containerFactory = "listenerContainerFactory", groupId = "crisda24-group",
 			properties = {"max.poll.interval.ms:4000", "max.poll.records:10"})
 	public void listen(List<ConsumerRecord<String, String>> messages) {
 		log.info("Start reading messages");
